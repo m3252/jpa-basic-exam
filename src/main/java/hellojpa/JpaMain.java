@@ -4,6 +4,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class JpaMain {
 
@@ -14,26 +16,32 @@ public class JpaMain {
 
         tx.begin();
         try {
-            Movie movie = new Movie();
-            movie.setDirector("aaaa");
-            movie.setActor("bbbb");
 
-            movie.setName("범죄와의 전쟁");
-            movie.setPrice(10000);
-            em.persist(movie);
-            
+            Child child1 = new Child();
+            Child child2 = new Child();
+
+            Parent parent = new Parent();
+            parent.addChild(child1);
+            parent.addChild(child2);
+
+            em.persist(parent);
+
             em.flush();
             em.clear();
-            Item item = em.find(Movie.class, movie.getId());
-            System.out.println("item = " + item);
+
+            Parent findParent = em.find(Parent.class, parent.getId());
+
+            em.remove(findParent);
 
 
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
         emf.close();
     }
+
 }
